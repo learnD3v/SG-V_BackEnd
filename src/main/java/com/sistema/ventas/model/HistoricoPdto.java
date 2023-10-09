@@ -1,6 +1,7 @@
 package com.sistema.ventas.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sun.istack.NotNull;
@@ -39,14 +40,6 @@ public class HistoricoPdto implements Serializable {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date fechaAlta;
 
-    @Column(name = "usu_mod")
-    private String usuMod;
-
-    @Column(name = "fecha_mod")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date fechaMod;
-
     @ManyToOne
     @JoinColumn(name = "id_productos",
             foreignKey = @ForeignKey(name = "productos_historico_productos_fk"))
@@ -68,4 +61,16 @@ public class HistoricoPdto implements Serializable {
     @Column(name = "estado")
     @NotNull
     private String estado;
+
+    @Column(name = "img_pdto")
+    @JsonIgnore
+    private byte[] imagen;
+
+    @Column(name = "img_nombre_pdto")
+    private String nombreImagen;
+
+    @Column(name = "tipo_img_pdto")
+    @JsonIgnore
+    private String tipoImagen;
+
 }

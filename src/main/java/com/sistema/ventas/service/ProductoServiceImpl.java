@@ -1,15 +1,23 @@
 package com.sistema.ventas.service;
 
+import com.sistema.ventas.dto.ImgPdtoDTO;
 import com.sistema.ventas.dto.ResponseDTO;
+import com.sistema.ventas.dto.TableDTO;
 import com.sistema.ventas.model.HistoricoPdto;
 import com.sistema.ventas.model.Producto;
 import com.sistema.ventas.repository.HistoricoPdtoRepository;
 import com.sistema.ventas.repository.ProductoRepository;
 import com.sistema.ventas.specification.GenericSpecification;
+import com.sistema.ventas.util.View;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,12 +29,21 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
     private final HistoricoPdtoRepository historicoPdtoRepository;
     @Override
     @Transactional
-    public ResponseDTO save(Producto productoObj) {
+    public ResponseDTO save(Producto productoObj, MultipartFile imagen) {
         try {
             Producto producto = new Producto();
             producto.setDetallePdto(productoObj.getDetallePdto());
             producto.setCantidad(productoObj.getCantidad());
             producto.setPrecio(productoObj.getPrecio());
+
+            if (imagen != null) {
+                if (imagen.getBytes().length > 0) {
+                    producto.setNombreImagen(imagen.getOriginalFilename());
+                    producto.setTipoImagen(imagen.getContentType());
+                    producto.setImagen(imagen.getBytes());
+                }
+            }
+
             producto.setEstado("A");
             producto.setUsuAlta(productoObj.getUsuAlta());
             producto.setFechaAlta(new Date());
@@ -42,6 +59,13 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
                 historicoPdto.setDetallePdto(producto.getDetallePdto());
                 historicoPdto.setCantidad(producto.getCantidad());
                 historicoPdto.setPrecio(producto.getPrecio());
+                if (imagen != null) {
+                    if (imagen.getBytes().length > 0) {
+                        historicoPdto.setNombreImagen(imagen.getOriginalFilename());
+                        historicoPdto.setTipoImagen(imagen.getContentType());
+                        historicoPdto.setImagen(imagen.getBytes());
+                    }
+                }
                 historicoPdto.setEstado(producto.getEstado());
                 historicoPdtoRepository.save(historicoPdto);
             }
@@ -117,4 +141,29 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
         }
         return new ResponseDTO("Estado de producto nulo", HttpStatus.BAD_REQUEST);
     }
+
+    @Override
+    public ResponseDTO getAll(int page, int pageSize, String sortField, boolean sortAsc,
+                              Integer idProducto, String detallePdto, Integer cantidad, Integer precio, String estado) {
+
+        try {
+
+            detallePdto = detallePdto.equals("") ? null : detallePdto;
+            estado = estado.equals("") ? null : estado.toUpperCase();
+
+            Sort sort = Sort.by(sortAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortField);
+            Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+            Page<Producto> productoList = productoRepository.findAll(idProducto, detallePdto, cantidad, precio, estado, pageable);
+            TableDTO<Producto> tableDTO = new TableDTO<>(mapperViewEntityList(productoList.getContent(), Producto.class,
+                    View.ProductoShort.class), (int) productoList.getTotalElements());
+
+            return new ResponseDTO(new Date(), HttpStatus.OK, "Lista de productos recuperada con éxito", tableDTO);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO("Ocurrió un error inesperado al recuperar la lista de productos", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
