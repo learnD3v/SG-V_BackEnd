@@ -9,22 +9,23 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import javax.validation.Valid;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/producto")
 @RequiredArgsConstructor
 public class ProductoController {
     private final ProductoService productoService;
 
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(value = "/create", consumes = {MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResponseDTO> save(
-            @RequestPart ("producto")Producto productoObj,
-            @RequestPart(value="imagen", required = false) MultipartFile imgPdtoDTO) {
-        return productoService.save(productoObj, imgPdtoDTO).build();
+            @RequestBody Producto productoObj) {
+        return productoService.save(productoObj).build();
     }
-    @PutMapping("/update")
+    @PutMapping(value ="/update", consumes = {MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResponseDTO> modificarReferencia(
             @RequestParam Integer id,
             @RequestBody @Valid Producto productoObj,

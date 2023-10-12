@@ -62,15 +62,4 @@ public class HistoricoPdto implements Serializable {
     @NotNull
     private String estado;
 
-    @Column(name = "img_pdto")
-    @JsonIgnore
-    private byte[] imagen;
-
-    @Column(name = "img_nombre_pdto")
-    private String nombreImagen;
-
-    @Column(name = "tipo_img_pdto")
-    @JsonIgnore
-    private String tipoImagen;
-
 }

@@ -60,19 +60,4 @@ public class Producto implements Serializable {
     @JsonView({View.ProductoShort.class})
     private String estado;
 
-    @Column(name = "img_pdto")
-    @JsonIgnore
-    @JsonView({View.ProductoShort.class})
-    private byte[] imagen;
-
-    @Column(name = "img_nombre_pdto")
-    @JsonView({View.ProductoShort.class})
-    private String nombreImagen;
-
-    @Column(name = "tipo_img_pdto")
-    @JsonView({View.ProductoShort.class})
-    @JsonIgnore
-    private String tipoImagen;
-
-
 }

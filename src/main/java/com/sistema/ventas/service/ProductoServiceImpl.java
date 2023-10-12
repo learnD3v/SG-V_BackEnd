@@ -29,20 +29,12 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
     private final HistoricoPdtoRepository historicoPdtoRepository;
     @Override
     @Transactional
-    public ResponseDTO save(Producto productoObj, MultipartFile imagen) {
+    public ResponseDTO save(Producto productoObj) {
         try {
             Producto producto = new Producto();
             producto.setDetallePdto(productoObj.getDetallePdto());
             producto.setCantidad(productoObj.getCantidad());
             producto.setPrecio(productoObj.getPrecio());
-
-            if (imagen != null) {
-                if (imagen.getBytes().length > 0) {
-                    producto.setNombreImagen(imagen.getOriginalFilename());
-                    producto.setTipoImagen(imagen.getContentType());
-                    producto.setImagen(imagen.getBytes());
-                }
-            }
 
             producto.setEstado("A");
             producto.setUsuAlta(productoObj.getUsuAlta());
@@ -59,13 +51,6 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
                 historicoPdto.setDetallePdto(producto.getDetallePdto());
                 historicoPdto.setCantidad(producto.getCantidad());
                 historicoPdto.setPrecio(producto.getPrecio());
-                if (imagen != null) {
-                    if (imagen.getBytes().length > 0) {
-                        historicoPdto.setNombreImagen(imagen.getOriginalFilename());
-                        historicoPdto.setTipoImagen(imagen.getContentType());
-                        historicoPdto.setImagen(imagen.getBytes());
-                    }
-                }
                 historicoPdto.setEstado(producto.getEstado());
                 historicoPdtoRepository.save(historicoPdto);
             }

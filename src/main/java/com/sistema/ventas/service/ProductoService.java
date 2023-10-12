@@ -6,7 +6,7 @@ import com.sistema.ventas.model.Producto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductoService {
-    ResponseDTO save(Producto productoObj, MultipartFile imagen);
+    ResponseDTO save(Producto productoObj);
 
     ResponseDTO update(Integer id, Producto productoObj, String usuario);
 
