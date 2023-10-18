@@ -26,13 +26,13 @@ public class UsuarioServicelmpl extends GenericSpecification<Usuario> implements
     @Transactional
     public ResponseDTO save(Usuario usuarioObj) {
         try {
-            Usuario usuario = new Usuario();
-            usuario.setNombreUsu(usuarioObj.getNombreUsu());
-            usuario.setApellidoUsu(usuarioObj.getApellidoUsu());
-            usuario.setCorreoUsu(usuarioObj.getCorreoUsu());
+            Usuario usuario = new Usuario();//Llamamos al model de Usuario y le creamos el objeto usuario
+            usuario.setNombre(usuarioObj.getNombre());
+            usuario.setApellido(usuarioObj.getApellido());
+            usuario.setCorreo(usuarioObj.getCorreo());
             usuario.setEstado("A");
 
-            usuarioRepository.save(usuario);
+            usuarioRepository.save(usuario); //tod0 lo que use "usuario" se mandaria al repository
 
             return new ResponseDTO("Empleado guardado con éxito", HttpStatus.OK);
         } catch (Exception e) {
@@ -46,9 +46,9 @@ public class UsuarioServicelmpl extends GenericSpecification<Usuario> implements
         try {
             Usuario usuarioUp = usuarioRepository.findById(id).orElse(null);
 
-            usuarioUp.setNombreUsu(usuarioObj.getNombreUsu());
-            usuarioUp.setApellidoUsu(usuarioObj.getApellidoUsu());
-            usuarioUp.setCorreoUsu(usuarioObj.getCorreoUsu());
+            usuarioUp.setNombre(usuarioObj.getNombre());
+            usuarioUp.setApellido(usuarioObj.getApellido());
+            usuarioUp.setCorreo(usuarioObj.getCorreo());
             usuarioUp.setEstado(usuarioObj.getEstado());
             usuarioRepository.save(usuarioUp);
 
@@ -65,18 +65,18 @@ public class UsuarioServicelmpl extends GenericSpecification<Usuario> implements
     }
 
     @Override
-    public ResponseDTO getAll(int page, int pageSize, String sortField, boolean sortAsc, Integer idUsuario, String nombreUsu, String apellidoUsu, String correoUsu, String estado) {
+    public ResponseDTO getAll(int page, int pageSize, String sortField, boolean sortAsc, Integer idUsuario, String nombre, String apellido, String correo, String estado) {
         try {
 
-            nombreUsu = nombreUsu.equals("") ? null : nombreUsu;
-            apellidoUsu = apellidoUsu.equals("") ? null : apellidoUsu;
-            correoUsu = correoUsu.equals("") ? null : correoUsu;
+            nombre = nombre.equals("") ? null : nombre;
+            apellido = apellido.equals("") ? null : apellido;
+            correo = correo.equals("") ? null : correo;
             estado = estado.equals("") ? null : estado.toUpperCase();
 
             Sort sort = Sort.by(sortAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortField);
             Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-            Page<Usuario> empleadoList = usuarioRepository.findAll(idUsuario, nombreUsu, apellidoUsu, correoUsu, estado, pageable);
+            Page<Usuario> empleadoList = usuarioRepository.findAll(idUsuario, nombre, apellido, correo, estado, pageable);
             TableDTO<Usuario> tableDTO = new TableDTO<>(mapperViewEntityList(empleadoList.getContent(), Usuario.class,
                     View.UsuarioShort.class), (int) empleadoList.getTotalElements());
 

@@ -35,17 +35,17 @@ public class Usuario  implements Serializable{
     @Column(name = "nombre")
     @NotNull
     @JsonView({View.UsuarioShort.class})
-    private String nombreUsu;
+    private String nombre;
 
     @Column(name = "apellido")
     @NotNull
     @JsonView({View.UsuarioShort.class})
-    private String apellidoUsu;
+    private String apellido;
 
     @Column(name = "correo")
     @NotNull
     @JsonView({View.UsuarioShort.class})
-    private String correoUsu;
+    private String correo;
 
     @Column(name = "estado")
     @NotNull

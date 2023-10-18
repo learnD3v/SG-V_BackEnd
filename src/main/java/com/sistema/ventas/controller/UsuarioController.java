@@ -17,7 +17,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     @PostMapping(value = "/create", consumes = {MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResponseDTO> save(
-            @RequestBody Usuario usuarioObj) {
+            @RequestBody Usuario usuarioObj) { //Pide el parametro de usuarioObj
         return usuarioService.save(usuarioObj).build();
     }
 
@@ -33,15 +33,15 @@ public class UsuarioController {
     public ResponseEntity<ResponseDTO> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "apellidoUsu") String sortField,
+            @RequestParam(defaultValue = "apellido") String sortField,
             @RequestParam(defaultValue = "true") boolean sortAsc,
             @RequestParam(required = false) Integer idUsuario,
-            @RequestParam(required = false) String nombreUsu,
-            @RequestParam(required = false) String apellidoUsu,
-            @RequestParam(required = false) String correoUsu,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String apellido,
+            @RequestParam(required = false) String correo,
             @RequestParam(required = false) String estado
     ) {
-        return usuarioService.getAll(page, pageSize, sortField, sortAsc, idUsuario, nombreUsu, apellidoUsu, correoUsu, estado).build();
+        return usuarioService.getAll(page, pageSize, sortField, sortAsc, idUsuario, nombre, apellido, correo, estado).build();
     }
 
 

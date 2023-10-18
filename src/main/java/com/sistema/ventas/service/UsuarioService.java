@@ -12,5 +12,5 @@ public interface UsuarioService {
     ResponseDTO activarInactivar(Integer id, String usuario);
 
     ResponseDTO getAll(int page, int pageSize, String sortField, boolean sortAsc,
-                       Integer idUsuario, String nombreUsu, String apellidoUsu, String correoUsu, String estado);
+                       Integer idUsuario, String nombre, String apellido, String correo, String estado);
 }
