@@ -1,6 +1,5 @@
 package com.sistema.ventas.service;
 
-import com.sistema.ventas.dto.ImgPdtoDTO;
 import com.sistema.ventas.dto.ResponseDTO;
 import com.sistema.ventas.dto.TableDTO;
 import com.sistema.ventas.model.HistoricoPdto;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -92,6 +90,43 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
             return new ResponseDTO("Error desconocido al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseDTO vender(Integer id, Producto productoObj, String usuario) {
+
+        try {
+            Producto producto = productoRepository.findById(id).orElse(null);
+
+            if (producto != null) {
+                int cantidadVendida = productoObj.getCantidad();
+
+                if (cantidadVendida <= 0 || cantidadVendida > producto.getCantidad()) {
+                    return new ResponseDTO("La cantidad de productos a vender no es válida", HttpStatus.BAD_REQUEST);
+                }
+
+                producto.setCantidad(producto.getCantidad() - cantidadVendida);
+                productoRepository.save(producto);
+
+                HistoricoPdto historicoPdto = new HistoricoPdto();
+                historicoPdto.setUsuAlta(usuario);
+                historicoPdto.setFechaAlta(new Date());
+                historicoPdto.setIdPdto(producto);
+                historicoPdto.setDetallePdto(producto.getDetallePdto());
+                historicoPdto.setCantidad(cantidadVendida);
+                historicoPdto.setPrecio(producto.getPrecio());
+                historicoPdto.setEstado(producto.getEstado());
+                historicoPdtoRepository.save(historicoPdto);
+
+                return new ResponseDTO("Venta realizada con éxito", HttpStatus.OK);
+            } else {
+                return new ResponseDTO("Producto no encontrado", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO("Error desconocido al vender producto", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Override
     public ResponseDTO activarInactivar(Integer id, String usuario) {
         AtomicReference<String> mensaje = new AtomicReference<>("");

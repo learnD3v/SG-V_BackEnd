@@ -32,6 +32,15 @@ public class ProductoController {
             @RequestParam String usuario) {
         return productoService.update(id, productoObj, usuario).build();
     }
+
+    @PutMapping(value = "/vender", consumes = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<ResponseDTO> venderProducto(
+            @RequestParam Integer id,
+            @RequestBody @Valid Producto productoObj,
+            @RequestParam String usuario) {
+        return productoService.vender(id, productoObj, usuario).build();
+    }
+
     @PostMapping("/activar-inactivar")
     public ResponseEntity<ResponseDTO> activarInactivarPdto(@RequestParam Integer id, @RequestParam String usuario) {
         return productoService.activarInactivar(id, usuario).build();

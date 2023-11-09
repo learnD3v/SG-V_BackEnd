@@ -14,4 +14,6 @@ public interface ProductoService {
 
     ResponseDTO getAll(int page, int pageSize, String sortField, boolean sortAsc,
                        Integer idProducto, String detallePdto, Integer cantidad, Integer precio, String estado);
+
+    ResponseDTO vender(Integer id, Producto productoObj, String usuario);
 }
