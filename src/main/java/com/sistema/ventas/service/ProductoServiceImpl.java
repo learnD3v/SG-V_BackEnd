@@ -93,7 +93,6 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
 
     @Override
     public ResponseDTO vender(Integer id, Producto productoObj, String usuario) {
-
         try {
             Producto producto = productoRepository.findById(id).orElse(null);
 
@@ -104,6 +103,8 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
                     return new ResponseDTO("La cantidad de productos a vender no es válida", HttpStatus.BAD_REQUEST);
                 }
 
+                int precioTotalVenta = cantidadVendida * producto.getPrecio();
+
                 producto.setCantidad(producto.getCantidad() - cantidadVendida);
                 productoRepository.save(producto);
 
@@ -113,7 +114,7 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
                 historicoPdto.setIdPdto(producto);
                 historicoPdto.setDetallePdto(producto.getDetallePdto());
                 historicoPdto.setCantidad(cantidadVendida);
-                historicoPdto.setPrecio(producto.getPrecio());
+                historicoPdto.setPrecio(precioTotalVenta); // Se establece el precio total de la venta
                 historicoPdto.setEstado(producto.getEstado());
                 historicoPdtoRepository.save(historicoPdto);
 
@@ -122,10 +123,10 @@ public class ProductoServiceImpl extends GenericSpecification<Producto> implemen
                 return new ResponseDTO("Producto no encontrado", HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseDTO("Error desconocido al vender producto", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @Override
     public ResponseDTO activarInactivar(Integer id, String usuario) {
